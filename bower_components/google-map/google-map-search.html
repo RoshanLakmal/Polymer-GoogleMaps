@@ -27,14 +27,15 @@ information on the API.
  -->
 
 <script>
+
   Polymer({
+
     is: 'google-map-search',
 
     properties: {
+
       /**
        * The Google map object.
-       *
-       * @type google.maps.Map
        */
       map: {
         type: Object,
@@ -131,14 +132,17 @@ information on the API.
      * Fired when the details of a place are returned.
      *
      * @event google-map-search-place-detail
-     * @param {google.maps.MarkerPlace} detail The place details.
+     *   @param {google.maps.MarkerPlace} detail The place details.
      */
 
     /**
      * Fired when the search element returns a result.
      *
      * @event google-map-search-results
-     * @param {Array<{latitude: number, longitude: number}>} detail An array of search results
+     *   @param {Array} detail An array of search results
+     *   @param {number} detail.latitude Latitude of the result.
+     *   @param {number} detail.longitude Longitude of the result.
+     *   @param {bool} detail.show Whether to show the result on the map.
      */
 
     /**
@@ -151,12 +155,14 @@ information on the API.
         if (this.types && typeof this.types == 'string') {
           var types = this.types.split(' ');
         }
-        if (this.radius) {
+
+        if (!this.globalSearch) {
+          var bounds = this.map.getBounds();
+        } else if (this.radius) {
           var radius = this.radius;
           var location = this.location ? this.location : this.map.getCenter();
-        } else if (!this.globalSearch) {
-          var bounds = this.map.getBounds();
         }
+
         places.textSearch({
           query: this.query,
           types: types,
@@ -169,7 +175,6 @@ information on the API.
 
     /**
      * Fetches details for a given place.
-     *
      * @param {String} placeId The place id.
      * @return {Promise} place The place information.
      */
